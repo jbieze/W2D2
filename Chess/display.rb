@@ -29,8 +29,8 @@ class Display
     (0..7).each do |row|
       print row.to_s + " "
       board.grid[row].each_with_index do |square, col|
-        if @cursor_pos = [row, col]
-          print (PIECES[square.class] + " ").color
+        if cursor.cursor_pos == [row, col]
+          print (PIECES[square.class] + " ").colorize(:blue)
         else
           print PIECES[square.class] + " "
         end
@@ -39,4 +39,13 @@ class Display
       puts ""
     end
   end
+
+  # def move_cursor
+  #   while true
+  #     render
+  #     cursor.get_input
+  #
+  #   end
+  # end
+
 end
