@@ -1,4 +1,4 @@
-
+require_relative "display.rb"
 
 class Game
 
@@ -9,3 +9,6 @@ class Game
 
 
 end
+
+b = Board.new
+d = Display.new(b)

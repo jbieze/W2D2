@@ -54,8 +54,8 @@ class Board
     self[[7,7]] = Rook.new([7,7], :white)
   end
 
-  def self.in_bounds(pos)
-    return true if (0..8).include?(pos.first) && (0..8).include?(pos.last)
+  def self.in_bounds?(pos)
+    return true if (0..7).include?(pos.first) && (0..7).include?(pos.last)
     false
   end
 

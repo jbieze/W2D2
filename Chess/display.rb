@@ -1,6 +1,7 @@
 require_relative 'cursor.rb'
 require 'colorize'
 require_relative 'board.rb'
+require 'byebug'
 
 
 class Display
@@ -29,7 +30,9 @@ class Display
     (0..7).each do |row|
       print row.to_s + " "
       board.grid[row].each_with_index do |square, col|
-        if cursor.cursor_pos == [row, col]
+        if cursor.selected && cursor.cursor_pos == [row, col]
+          print (PIECES[square.class] + " ").colorize(:red)
+        elsif cursor.cursor_pos == [row, col]
           print (PIECES[square.class] + " ").colorize(:blue)
         else
           print PIECES[square.class] + " "
@@ -40,12 +43,11 @@ class Display
     end
   end
 
-  # def move_cursor
-  #   while true
-  #     render
-  #     cursor.get_input
-  #
-  #   end
-  # end
+  def move_cursor
+    while true
+      render
+      cursor.get_input
+    end
+  end
 
 end
