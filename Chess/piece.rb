@@ -1,9 +1,11 @@
 require_relative "board.rb"
+require "singleton"
 
 class Piece
-  attr_accessor :position, :color
+  attr_accessor :position, :color, :board
 
-  def initialize(pos, color)
+  def initialize(pos, color, board)
+    @board = board
     @position = pos
     @color = color
   end
@@ -12,96 +14,113 @@ class Piece
     @position = pos
   end
 
-  def moves
-
-  end
-
   def valid_move?(pos)
+    moves.include?(pos)
   end
 
 end
 
 module SlidingPiece
 
-  def move
+  def moves
     array = []
 
-    move_dirs = move_dir
-    until move_dirs.empty?
-      move_dirs.each_with_index do |dir, idx|
-        pos = [(position.first + move.first), (position.last + move.last)]
-        if !Board.in_bounds?(pos) || board[pos].color == color
-          move_dirs.delete(dir)
-        elsif board[pos].color != color
-          move_dirs.delete(dir)
-          array << pos
-        else
-          array << pos
-          move_dirs[idx] = [dir.first + 1, dir.last + 1]
-        end
-      end
+    move_dir.each do |vector|
+      array += one_direction(vector)
     end
 
     array
   end
 
-  # def self.in_bounds?(pos)
-  #   return true if (0..7).include?(pos.first) && (0..7).include?(pos.last)
-  #   false
-  # end
+  def one_direction(vector)
+    array = []
+    new_pos = position
+
+    while true
+      pos = array_addition(vector, new_pos)
+
+      if !Board.in_bounds?(pos) || board[pos].color == color
+        puts "Hit barrier!"
+        break
+      elsif board[pos].color != color && !board[pos].is_a?(NullPiece)
+        puts "Hit opponent piece!"
+        array << pos
+        break
+      else
+        puts "Hit empty square"
+        array << pos
+        new_pos = pos
+      end
+    end
+
+    array.sort
+  end
+
+  def array_addition(arr1, arr2)
+    arr = []
+    arr1.each_with_index do |el, idx|
+      arr << el + arr2[idx]
+    end
+    arr
+  end
 
 end
 
 module SteppingPiece
 
   def moves
-    MOVE_ARR.map do |move|
+    move_arr.map do |move|
       [(position.first + move.first), (position.last + move.last)]
     end
   end
 end
 
 class NullPiece < Piece
+  include Singleton
 
   def initialize
-
+    @color = nil
   end
 
 end
 
 class Bishop < Piece
+  include SlidingPiece
 
   def move_dir
-    [[1,1], [-1,-1], [1,-1], [-1,1]]
-    [x,y]
+    [[1, 1], [-1, -1 ], [1, -1 ], [-1, 1]]
   end
 
 end
 
 class Rook < Piece
+  include SlidingPiece
 
   def move_dir
-    [[0,1], [0, -1], [1, 0], [-1, 0]]
+    [[0, 1], [0, -1], [1, 0], [-1, 0]]
   end
 end
 
 class Queen < Piece
+  include SlidingPiece
 
   def move_dir
-    [[1,1], [-1,-1], [1,-1], [-1,1], [0,1], [0, -1], [1, 0], [-1, 0]]
+    [[1, 1], [-1, -1], [1, -1], [-1, 1], [0, 1], [0, -1], [1, 0], [-1, 0]]
   end
 end
 
 class Knight < Piece
-  MOVE_ARR = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2],
-              [1, -2], [-1, 2], [-1, -2]].freeze
+  def move_arr
+     [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]]
+  end
 
   include SteppingPiece
 end
 
 class King < Piece
-  MOVE_ARR = [[1, 0], [1, 1], [1, -1], [0, 1], [0, -1],
-              [-1, 0], [-1, 1], [-1, -1]].freeze
+  def move_arr
+    [[1, 0], [1, 1], [1, -1], [0, 1], [0, -1], [-1, 0], [-1, 1], [-1, -1]]
+  end
   include SteppingPiece
 
 end

@@ -9,6 +9,3 @@ class Game
 
 
 end
-
-b = Board.new
-d = Display.new(b)

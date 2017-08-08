@@ -41,12 +41,14 @@ class Display
 
       puts ""
     end
+    nil
   end
 
   def move_cursor
     while true
       render
       cursor.get_input
+      system("clear")
     end
   end
 
