@@ -10,12 +10,12 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
-    piece = grid[start_pos]
+    piece = self[start_pos]
     raise StandardError if piece.is_a?(NullPiece)
     raise StandardError unless piece.valid_move?(end_pos)
 
-    grid[start_pos] = NullPiece.new
-    grid[end_pos] = piece
+    self[start_pos] = NullPiece.instance
+    self[end_pos] = piece
     piece.update_pos(end_pos)
   end
 

@@ -92,6 +92,7 @@ class Cursor
       Process.exit(0)
 
     end
+
   end
 
   def update_pos(diff)

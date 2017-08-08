@@ -14,13 +14,14 @@ class Piece
     @position = pos
   end
 
-  def valid_move?(pos)
-    moves.include?(pos)
-  end
+
 
 end
 
 module SlidingPiece
+  def valid_move?(pos)
+    moves.include?(pos)
+  end
 
   def moves
     array = []
@@ -67,6 +68,10 @@ module SlidingPiece
 end
 
 module SteppingPiece
+
+  def valid_move?(pos)
+    moves.include?(pos)
+  end
 
   def moves
     move_arr.map do |move|
