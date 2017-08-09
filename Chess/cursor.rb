@@ -83,6 +83,7 @@ class Cursor
 
     when :return, :space
       toggle_selected
+      board.selected_pos << @cursor_pos
       @cursor_pos
 
     when :left, :right, :up, :down

@@ -29,6 +29,10 @@ class Display
     [NullPiece, nil] => " "
   }
 
+  def hovered?(pos)
+    cursor.cursor_pos == pos
+  end
+
   def render
     print "  "
     (0..7).each { |el| print el.to_s + " " }
@@ -36,14 +40,24 @@ class Display
     (0..7).each do |row|
       print row.to_s + " "
       board.grid[row].each_with_index do |piece, col|
-        if cursor.selected && cursor.cursor_pos == [row, col]
-          print (PIECES[[piece.class, piece.color]] + " ").colorize(:red)
-        elsif cursor.cursor_pos == [row, col]
+        pos = [row, col]
+
+        if cursor.selected && hovered?(pos)
+          print (PIECES[[piece.class, piece.color]] + " ")
+          .colorize(background: :red)
+
+        elsif board.selected_pos.include?(pos)
+          print (PIECES[[piece.class, piece.color]] + " ")
+          .colorize(color: :blue, background: :red)
+
+        elsif hovered?(pos)
           print (PIECES[[piece.class, piece.color]] + " ")
           .colorize(color: :blue, background: :yellow)
+
         elsif (row + col).even?
           print (PIECES[[piece.class, piece.color]] + " ")
           .colorize(color: :black, background: :white)
+
         else
           print (PIECES[[piece.class, piece.color]] + " ")
           .colorize(color: :black, background: :gray)
@@ -54,24 +68,15 @@ class Display
     nil
   end
 
-  def play
-    first_pos = nil
-    second_pos = nil
-
-    while true
+  def get_move
+    while board.selected_pos.length < 2
       render
-      input = cursor.get_input
-      if cursor.selected == true
-        first_pos = input
-      elsif cursor.selected == false
-        second_pos = input
-        break
-      end
-
+      cursor.get_input
       system("clear")
     end
 
-    board.move_piece(first_pos, second_pos)
+    board.move_piece(board.selected_pos.first, board.selected_pos.last)
+    board.selected_pos = []
     render
   end
 

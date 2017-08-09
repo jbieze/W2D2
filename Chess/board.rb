@@ -2,10 +2,11 @@ require_relative "piece.rb"
 
 class Board
 
-  attr_accessor :grid
+  attr_accessor :grid, :selected_pos
 
   def initialize
     @grid = Array.new(8) { Array.new(8) { NullPiece.instance } }
+    @selected_pos = []
     add_pieces
   end
 
@@ -57,6 +58,50 @@ class Board
   def self.in_bounds?(pos)
     return true if (0..7).cover?(pos.first) && (0..7).cover?(pos.last)
     false
+  end
+
+  def get_side_pieces(color)
+    array = []
+
+    (0..7).each do |i|
+      (0..7).each do |i2|
+        pos = [i, i2]
+        piece = self[pos]
+        array << pos if !piece.is_a?(NullPiece) && piece.color == color
+      end
+    end
+
+    array
+  end
+
+  def in_check?(color)
+    if color == :white
+      opp_color = :black
+    else
+      opp_color = :white
+    end
+    #get king pos
+    #check all valid moves of other PIECES
+    #if any of those moves are on king, return true
+    king_pos = get_piece_pos(King, color)
+    opp_piece_positions = get_side_pieces(opp_color)
+    opp_valid_moves = []
+    opp_piece_positions.each do |pos|
+      piece = self[pos]
+      opp_valid_moves += piece.moves
+    end
+    opp_valid_moves.include?(king_pos)
+  end
+
+  def get_piece_pos(type, color)
+    (0..7).each do |i|
+      (0..7).each do |i2|
+        pos = [i, i2]
+        piece = self[pos]
+        return pos if piece.is_a?(type) && piece.color == color
+      end
+    end
+
   end
 
 end
